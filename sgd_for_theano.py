@@ -70,7 +70,7 @@ class tt_sgd_model:
 ##############################################################
 #### naive sgd optimization
 ##############################################################
-		
+def sgd_batch(sgd_model, xs_tr, ys_tr,  xs_val, ys_val, batch_size = 100, n_epochs=20, verbose = 0):
     n_tr_batches = xs_tr.shape[0]/batch_size
     n_val_batches = xs_val.shape[0]/batch_size
     if n_tr_batches * batch_size < xs_tr.shape[0]:
