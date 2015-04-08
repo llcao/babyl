@@ -16,8 +16,9 @@ def gen_updates_sgd(loss, all_parameters, learning_rate):
     for param_i, grad_i in zip(all_parameters, all_grads):
         updates.append((param_i, param_i - learning_rate * grad_i))
     return updates
-
+	
 def get_update_rmsprop(loss, all_parameters, learning_rate):
+	# this function is copied from Chad DeChant's implementation
     all_grads = T.grad(loss, all_parameters)
     updates = []
     for p, g in zip(all_parameters, all_grads):
