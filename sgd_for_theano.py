@@ -10,10 +10,22 @@ from theano import tensor as T
 theano.config.on_unused_input = 'ignore'
 
 def gen_updates_sgd(loss, all_parameters, learning_rate):
-    all_grads = [theano.grad(loss, param) for param in all_parameters]
+    #all_grads = [theano.grad(loss, param) for param in all_parameters]
+    all_grads = T.grad(loss, all_parameters)
     updates = []
     for param_i, grad_i in zip(all_parameters, all_grads):
         updates.append((param_i, param_i - learning_rate * grad_i))
+    return updates
+
+def get_update_rmsprop(loss, all_parameters, learning_rate):
+    all_grads = T.grad(loss, all_parameters)
+    updates = []
+    for p, g in zip(all_parameters, all_grads):
+        MeanSquare = theano.shared(p.get_value() * 0.)
+        nextMeanSquare = 0.9 * MeanSquare + (1 - 0.9) * g ** 2
+        g = g / T.sqrt(nextMeanSquare + 0.000001)
+        updates.append((MeanSquare, nextMeanSquare))
+        updates.append((p, p - learning_rate * g))
     return updates
 
 class tt_sgd_model:
@@ -70,7 +82,7 @@ class tt_sgd_model:
 ##############################################################
 #### naive sgd optimization
 ##############################################################
-def sgd_batch(sgd_model, xs_tr, ys_tr,  xs_val, ys_val, batch_size = 100, n_epochs=20, verbose = 0):
+def sgd_batch(sgd_model, xs_tr, ys_tr,  xs_val, ys_val, batch_size = 500, n_epochs=5, verbose = 0):
     n_tr_batches = xs_tr.shape[0]/batch_size
     n_val_batches = xs_val.shape[0]/batch_size
     if n_tr_batches * batch_size < xs_tr.shape[0]:
