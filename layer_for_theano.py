@@ -178,7 +178,6 @@ class HiddenLayer(AbstractLayer):
         return T.sum(self.W ** 2)
 
     def get_output_shape(self):
-        # return (float('nan'), self.n_out)
         shape0 = list(self.input_layer.get_output_shape())
         shape0[-1] = self.n_out
         return tuple(shape0)
@@ -187,7 +186,7 @@ class SoftmaxLayer(AbstractLayer):
     def __init__(self,  inputlayer):
         self.input_layer = inputlayer
         self.params = []
-        self._desc = 'HiddenWithoutB_%s(%dx%d) '
+        self._desc = 'SoftmaxLayer` '
 
     def output(self, *args, **kwargs):
         return T.nnet.softmax(self.input_layer.output(*args, **kwargs))
